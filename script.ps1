@@ -23,7 +23,7 @@ else {
     $fileData = Get-Content -Path .\baseline.txt
 
     foreach($a in $fileData) {
-        $pair = $a.Split("|")
+        $pair = $a.Split(" | ")
         $path = $pair[0]
         $hash = $pair[1]
         if(!$fileHashTable.ContainsKey($path)) {
@@ -42,6 +42,18 @@ else {
     $fileHashTable
 
     while ($true) {
-        Start-Sleep -Seconds 1   
+        Start-Sleep -Seconds 1
+
+        # copying code change this
+        $files = Get-ChildItem -Path .\Files
+
+        foreach ($a in $files) {
+            $hash = Calcualate-File-Hash $a.FullName
+
+            # Notify new file being created
+            if(!$fileHashTable.Contains($hash.Path)) {
+                Write-Host "$($hash.Path) has been created!" -ForegroundColor Green
+            }
+        }
     }
 }
