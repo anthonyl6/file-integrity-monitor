@@ -6,13 +6,24 @@ Function Calcualate-File-Hash($filePath) {
     return $hash
 }
 
-$hash = Calcualate-File-Hash "C:\Users\Anthony\Pictures"
-
 if ($response -eq "A".ToUpper()) {
     Write-Host "Calculating hashes and making new Baseline"
 
-    $files = Get-ChildItem -Path ".\Files"
+    $files = Get-ChildItem -Path .\Files
+
+    foreach ($a in $files) {
+        $hash = Calcualate-File-Hash $a.FullName
+        "$($hash.Path) | $($hash.Hash)" | Out-File -FilePath .\baseline.txt -Append
+    }
 }
 else {
     Write-Host "Monitoring files with Baseline"
+
+    $fileHashTable = @{}
+    $fileData = Get-Content -Path .\baseline.txt
+
+    foreach($a in $fileData) {
+        $fileHashTable.Add($a.Split("|")[0], $a.Split("|")[1])
+    }
+    $fileHashTable.Values
 }
