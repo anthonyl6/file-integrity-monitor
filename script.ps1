@@ -23,7 +23,25 @@ else {
     $fileData = Get-Content -Path .\baseline.txt
 
     foreach($a in $fileData) {
-        $fileHashTable.Add($a.Split("|")[0], $a.Split("|")[1])
+        $pair = $a.Split("|")
+        $path = $pair[0]
+        $hash = $pair[1]
+        if(!$fileHashTable.ContainsKey($path)) {
+            $fileHashTable.Add($path, $hash)
+            Write-Host "Entering new pair"
+        }
+        elseif ($fileHashTable.ContainsKey($path)) {
+            Write-Host "Pair already exists"
+            if(!$fileHashTable[$hash] -eq $hash) {
+                Write-Host "Hashes are different... updating..."
+                $fileHashTable.Remove($path)
+                $fileHashTable.Add($path, $hash) 
+            }
+        }
     }
-    $fileHashTable.Values
+    $fileHashTable
+
+    while ($true) {
+        Start-Sleep -Seconds 1   
+    }
 }
